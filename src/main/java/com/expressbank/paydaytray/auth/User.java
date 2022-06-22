@@ -4,6 +4,7 @@ import com.expressbank.paydaytray.enums.Role;
 import com.expressbank.paydaytray.model.Stock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,8 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name="Users")
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class User implements UserDetails {
 
     @Id
@@ -29,10 +29,9 @@ public class User implements UserDetails {
     private String email;
     @Column(length = 100)
     private String password;
-    private Double balance;
+    private Double balance = 0D;
     @OneToMany(mappedBy = "user")
     private Set<Stock> stocks;
-    @Builder.Default
     private Role role = Role.USER;
     @OneToOne(mappedBy = "user")
     private ConfirmationToken confirmationToken;
