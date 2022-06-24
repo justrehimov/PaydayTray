@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.ExpressionException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +75,33 @@ public class UserServiceImpl implements UserService {
         User user = confirmationToken.getUser();
         user.setEnabled(true);
         userRepo.save(user);
+    }
+
+    @Override
+    @SneakyThrows
+    public ResponseModel<List<UserResponse>> getAllUsers() {
+        List<User> users = userRepo.findAll();
+        if(users.isEmpty())
+            throw new ExpressException(ErrorMessage.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND);
+        List<UserResponse> userResponses = users.stream()
+                .map(u->modelMapper.map(u,UserResponse.class))
+                .collect(Collectors.toList());
+        return ResponseModel.<List<UserResponse>>builder()
+                .model(userResponses)
+                .status(ResponseStatus.getSuccess())
+                .build();
+    }
+
+    @Override
+    @SneakyThrows
+    public ResponseModel<UserResponse> getUserById(Long id) {
+        User user = userRepo.findById(id)
+                .orElseThrow(()->new ExpressException(ErrorMessage.USER_NOT_FOUND,ErrorCode.USER_NOT_FOUND));
+        UserResponse userResponse = modelMapper.map(user,UserResponse.class);
+        return ResponseModel.<UserResponse>builder()
+                .model(userResponse)
+                .status(ResponseStatus.getSuccess())
+                .build();
     }
 
     @SneakyThrows

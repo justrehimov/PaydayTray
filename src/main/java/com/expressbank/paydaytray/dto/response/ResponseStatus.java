@@ -1,5 +1,7 @@
 package com.expressbank.paydaytray.dto.response;
 
+import com.expressbank.paydaytray.exception.ErrorCode;
+import com.expressbank.paydaytray.exception.ErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +17,8 @@ public class ResponseStatus {
 
     public static ResponseStatus getSuccess(){
         ResponseStatus status = new ResponseStatus();
-        status.setMessage("Success");
-        status.setCode(100);
+        status.setMessage(ErrorMessage.SUCCESS);
+        status.setCode(ErrorCode.SUCCESS);
         return status;
     }
 }

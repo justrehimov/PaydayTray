@@ -33,4 +33,5 @@ public class ExceptionController {
                 .code(ErrorCode.VALIDATION_ERROR)
                 .build();
     }
+
 }
